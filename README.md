@@ -2,6 +2,8 @@
 
 A full-stack AI-powered inventory management system built with Next.js, Prisma, NextAuth, and Groq AI.
 
+**Live Demo:** [inventory-management-system-two-woad.vercel.app](https://inventory-management-system-two-woad.vercel.app)
+
 ![Next.js](https://img.shields.io/badge/Next.js-16-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 ![Prisma](https://img.shields.io/badge/Prisma-6-2D3748)
@@ -83,6 +85,7 @@ Edit `.env` with your actual values:
 ```env
 DATABASE_URL="postgresql://user:password@host.neon.tech/dbname?sslmode=require"
 AUTH_SECRET="your-generated-secret"      # Generate with: npx auth secret
+AUTH_URL="http://localhost:3000"         # Use production URL when deploying
 AUTH_GITHUB_ID="your-github-client-id"
 AUTH_GITHUB_SECRET="your-github-client-secret"
 AUTH_GOOGLE_ID="your-google-client-id"
@@ -96,25 +99,37 @@ GROQ_API_KEY="your-groq-api-key"
 npx prisma db push
 ```
 
-5. **Run the development server**
+5. **(Optional) Seed the database with demo data**
+
+```bash
+npm run db:seed
+```
+
+This adds 5 categories, 16 inventory items (with mixed statuses), and activity logs. If no admin exists, it creates `demo@invenai.com` / `demo123456`. Safe to run multiple times (upserts existing records).
+
+6. **Run the development server**
 
 ```bash
 npm run dev
 ```
 
-6. **Open [http://localhost:3000](http://localhost:3000)**
+7. **Open [http://localhost:3000](http://localhost:3000)**
 
 ### First-Time Setup
 
 1. Navigate to the sign-up page and create your account
 2. The first user is automatically assigned the **Admin** role
-3. Create categories (e.g., Electronics, Office Supplies, etc.)
+3. Create categories (e.g., Electronics, Office Supplies, etc.) — or run `npm run db:seed` for pre-populated demo data
 4. Start adding inventory items
 5. Try the AI Assistant to get insights about your inventory
 
 ## Project Structure
 
 ```
+prisma/
+├── schema.prisma         # Database schema
+└── seed.ts               # Demo data seeder
+
 src/
 ├── app/
 │   ├── (dashboard)/        # Main app pages (behind auth)
@@ -148,6 +163,17 @@ src/
 └── proxy.ts                # Route protection proxy
 ```
 
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run db:seed` | Seed database with demo data (categories, items, activity logs) |
+| `npx prisma db push` | Sync Prisma schema to database |
+| `npx prisma studio` | Open Prisma Studio (database GUI) |
+
 ## Deployment (Vercel)
 
 1. Push your code to GitHub
@@ -155,7 +181,8 @@ src/
 3. Add all environment variables from `.env.example`
 4. Set `AUTH_URL` to your production domain (e.g., `https://your-app.vercel.app`)
 5. Deploy — Prisma will auto-generate on `postinstall`
-6. Run `npx prisma db push` against your production database (or use Prisma Migrate)
+6. Run `npx prisma db push` against your production database
+7. (Optional) Run `npm run db:seed` to populate with demo data for reviewers
 
 ## API Routes
 
